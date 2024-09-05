@@ -1,1 +1,1 @@
-/usr/bin/c++ CMakeFiles/run.dir/main.cpp.o CMakeFiles/run.dir/include/Logger.cpp.o CMakeFiles/run.dir/server/server.cpp.o CMakeFiles/run.dir/bussiness/bussiness.cpp.o -o /home/joe/clion_project/yibo_server/run 
+/usr/bin/c++ CMakeFiles/run.dir/main.cpp.o CMakeFiles/run.dir/include/Logger.cpp.o CMakeFiles/run.dir/include/check_error.cpp.o CMakeFiles/run.dir/server/server.cpp.o CMakeFiles/run.dir/bussiness/bussiness.cpp.o -o /home/joe/yibo/y/yibo_server/run 

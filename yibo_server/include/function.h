@@ -11,14 +11,28 @@
 class process_helper
 {
 public:
-	process_helper() {}
+	process_helper() 
+	{
+
+		int ret = socketpair(AF_UNIX, SOCK_DGRAM, 0, pipes);
+		if(ret == -1)
+		{
+std::cout << "create pipes failed, error_code = " << strerror(errno) << std::endl;
+		}
+	}
 
 	virtual ~process_helper() {
 	}
 
 	template<typename function, typename... Args>
 	process_helper(function&& func, Args&&... args)
-		: m_binder(std::bind(std::forward<function>(func), std::forward<Args>(args)...)){}
+		: m_binder(std::bind(std::forward<function>(func), std::forward<Args>(args)...))
+	{
+		int ret = socketpair(AF_UNIX, SOCK_DGRAM, 0, pipes);
+		if(ret == -1){
+std::cout << "create pipes failed, error_code = " << strerror(errno) << std::endl;
+		}
+	}
 
 	template<typename function, typename... Args>
 	void set_process_func(function&& func, Args&&... args)
@@ -44,10 +58,7 @@ public:
 	void start_process_func()
 	{
 		if(is_bind() == false) return;
-		int ret = socketpair(AF_UNIX, SOCK_DGRAM, 0, pipes);
-		if(ret == -1){
-std::cout << "create pipes failed, error_code = " << strerror(errno) << std::endl;
-		}
+
 		pid_t pid;
 		if((pid = fork()) < 0){
 std::cout << "create sub process failed, error_code = " << strerror(errno) << std::endl;
@@ -72,7 +83,6 @@ std::cout << " sub process end, pid = " << getpid() << std::endl;
 
 	int send_fd(int socket, int fd_to_send)
 	{
-std::cout << "send_fd() = " << fd_to_send << std::endl;
 		struct msghdr message;
 		struct iovec iov;
 		char buffer[1];
@@ -104,7 +114,7 @@ std::cout << "send_fd() = " << fd_to_send << std::endl;
         // perror("sendmsg");
 		if(send_ret < 0)
 		{
-			std::cout << "send msg failed = " << strerror(errno) << std::endl;
+			std::cout << "send fd failed = " << strerror(errno) << std::endl;
 			// exit(1);
 		}
 		else
@@ -114,6 +124,28 @@ std::cout << "send_fd() = " << fd_to_send << std::endl;
         return 0;
     }
 
+	ssize_t send_msg(int socket, const char* msg)
+	{
+		struct msghdr message;
+		struct iovec iov;
+
+		iov.iov_base = (void*)msg;
+		iov.iov_len = strlen(msg) + 1;
+		
+		memset(&message, 0, sizeof(message));
+		message.msg_name = NULL;
+		message.msg_namelen = 0;
+		message.msg_iov = &iov;
+		message.msg_iovlen = 1;
+		
+		ssize_t send_ret = 0;
+		if((send_ret = sendmsg(socket, &message, 0)) < 0)
+		{
+std::cout << "send msg failed123 = " << strerror(errno) << std::endl;
+		}
+        return send_ret;
+	}
+	
 	int recv_fd(int socket)
 	{
 		struct msghdr message;
@@ -151,42 +183,33 @@ std::cout << "received_fd = " << received_fd << std::endl;
 		return -1;
 	}
 
-	int SendFD(int socket, int fd)
-	{ // 主进程完成
-		struct msghdr msg;
-		iovec iov[2];
-		char buf[2][10] = {"edoyun", "jueding"};
-		iov[0].iov_base = buf[0];
-		iov[0].iov_len = sizeof(buf[0]);
-		iov[1].iov_base = buf[1];
-		iov[1].iov_len = sizeof(buf[1]);
-		msg.msg_iov = iov;
-		msg.msg_iovlen = 2;
+	void recv_msg(int socket, char* msg, size_t msg_len)
+	{
+		struct msghdr message;
+		struct iovec iov;
 
-		// 下面的数据，才是我们需要传递的。
-		cmsghdr *cmsg = (cmsghdr *)calloc(1, CMSG_LEN(sizeof(int)));
-		if (cmsg == NULL)
-			return -1;
-		cmsg->cmsg_len = CMSG_LEN(sizeof(int));
-		cmsg->cmsg_level = SOL_SOCKET;
-		cmsg->cmsg_type = SCM_RIGHTS;
-		*(int *)CMSG_DATA(cmsg) = fd;
-		msg.msg_control = cmsg;
-		msg.msg_controllen = cmsg->cmsg_len;
+		iov.iov_base = msg;
+		iov.iov_len = msg_len;
+		
+		memset(&message, 0, sizeof(message));
+		message.msg_name = NULL;
+		message.msg_namelen = 0;
+		message.msg_iov = &iov;
+		message.msg_iovlen = 1;
+		
 
-		ssize_t ret = sendmsg(socket, &msg, 0);
-		if(ret < 0)
+		if (recvmsg(socket, &message, 0) < 0) 
 		{
-			std::cout << "send msg failed = " << strerror(errno) << std::endl;
-			// exit(1);
+			perror("recvmsg");
 		}
-		free(cmsg);
-		if (ret == -1)
+		else
 		{
-			return -2;
+std::cout << "buffer : " << msg << std::endl;
 		}
-		return 0;
+		return;
 	}
+
+
 
 	int pipes[2];
 

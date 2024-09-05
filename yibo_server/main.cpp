@@ -9,13 +9,16 @@
 #include "function.h"
 #include "Logger.h"
 #include "thread.h"
-
+#include "server.h"
 
 int sub_process_recv(process_helper* helper)
 {
-    int recv_fd = helper->recv_fd(helper->pipes[1]);
+    char buff[1024] = {0};
+    // int recv_fd = helper->recv_msg(helper->pipes[1], buff, sizeof(buff));
+    helper->recv_msg(helper->pipes[1], buff, sizeof(buff));
+std::cout << "recv : " << buff << std::endl;
 
-    std::cout << "sub process recv fd = " << recv_fd << std::endl;
+    // std::cout << "sub process recv fd = " << recv_fd << std::endl;
 
     // char buf[100] = {0};
 
@@ -62,58 +65,25 @@ std::cout << "log_server _ !\r\n";
 }
 
 
+
+
 int main() {
 
-    // // test test1;
-
-    // // test1.t_start();
-
-    // // std::this_thread::sleep_for(std::chrono::seconds(3)); // 避免占用过多 CPU
-    // // std::cout << " 11main process, pid = " << getpid() << std::endl;
-    // process_helper sub_log_process;
-    // sub_log_process.set_process_func(sub_process_log, &sub_log_process);
-    // sub_log_process.start_process_func();
-    // // std::cout << "main_process : pid = " << getpid() << std::endl;
-
-    // LogTest();
-
-    // // for(int i = 0; i < 100000; i++)
-    // // {
-    // //     ;
-    // // }
+//test_server
+    server  ser;
+    ser.server_accept_open();
+    ser.server_client_proc_open();
 
 
-    // // LogTest();
-
-    // while(1)
-    // {
-
-    // }
+    sleep(1);
 
 
-    // ---------------------------
-    process_helper process;
-
-    process.set_process_func(sub_process_recv, &process);
-    
-    process.start_process_func();
-    
-    // int fd = open("example.txt", O_CREAT | O_RDWR, 0777);
-
-    // if(fd > 0)
-    //     std::cout << "fd open !\r\n";
-    
-    process.SendFD(process.pipes[0], -1);
-
-
-    wait(NULL);
-
-    // close(fd);
-
-    close(process.pipes[0]);
 
     return 0;
 }
+
+
+
 
 
 //test_func_1
@@ -141,3 +111,51 @@ int main() {
     close(process.pipes[0]);
 
 */
+
+
+
+
+// #include <iostream>
+// #include <thread>
+// #include <atomic>
+
+// class Worker {
+// public:
+//     Worker() : running(true) {}
+
+//     void start() {
+//         workerThread = std::thread(&Worker::run, this);
+//     }
+
+//     void stop() {
+//         running = false; // 通知线程退出
+//         if (workerThread.joinable()) {
+//             workerThread.join();
+//         }
+//     }
+
+// private:
+//     void run() {
+//         while (running) {
+//             // 执行任务
+//             std::cout << "Working..." << std::endl;
+//             std::this_thread::sleep_for(std::chrono::milliseconds(500));
+//         }
+//         std::cout <<"thread stop working \r\n";
+//     }
+
+//     std::thread workerThread;
+//     std::atomic<bool> running; // 使用atomic保证线程安全
+// };
+
+// int main() {
+//     Worker worker;
+//     worker.start();
+
+//     std::this_thread::sleep_for(std::chrono::seconds(3));
+
+//     worker.stop(); // 停止工作线程
+//     std::cout << "Worker stopped." << std::endl;
+
+//     return 0;
+// }

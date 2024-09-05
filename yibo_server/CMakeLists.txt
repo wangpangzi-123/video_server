@@ -33,7 +33,7 @@
 # #添加 log_info 子文件夹至头文件
 # # target_include_directories(${EXECUTE_OBJ} PUBLIC "./log_info")
 
-cmake_minimum_required(VERSION 3.28)
+cmake_minimum_required(VERSION 3.12)
 
 PROJECT(YIBO_SERVER LANGUAGES CXX)
 
