@@ -197,4 +197,5 @@ CMakeFiles/run.dir/main.cpp.o: /home/joe/yibo/y/yibo_server/main.cpp \
  /usr/include/bits/types/struct_timeb.h /usr/include/c++/13/sstream \
  /usr/include/c++/13/bits/sstream.tcc /usr/include/c++/13/filesystem \
  /home/joe/yibo/y/yibo_server/server/server.h \
- /home/joe/yibo/y/yibo_server/bussiness/bussiness.h
+ /home/joe/yibo/y/yibo_server/bussiness/bussiness.h \
+ /usr/include/semaphore.h /usr/include/bits/semaphore.h

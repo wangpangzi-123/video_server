@@ -3,7 +3,7 @@
 #include <thread>
 #include <atomic>
 #include <mutex>
-
+#include <semaphore.h>
 struct bussiness
 {
     bussiness()
@@ -50,23 +50,26 @@ struct client_proc_helper : public bussiness
         else{std::cout << "m_bussiness_epoll_solver join failed!\r\n";}
     }
 
-    int bussiness_proc_open(process_helper* proc_helper)
+    int bussiness_proc_open(process_helper* proc_helper, sem_t* m_sem)
     {
         m_bussiness_add_client = std::thread(&client_proc_helper::thr_add_client_func, this);
         m_bussiness_epoll_solver = std::thread(&client_proc_helper::thr_epoll_solver_func, this);
         
-        while(!m_proc_self_stop_flag.load())
-        {
-            char buffer[1024] = {0};
-            proc_helper->recv_msg(proc_helper->pipes[1], buffer, sizeof(buffer));
-std::cout << "proc recv buffer : " << buffer << std::endl;
-            if(buffer[0] == 'e')
-            {
-std::cout << "ready exit!\r\n";
-                break;
-            }
+//         while(!m_proc_self_stop_flag.load())
+//         {
+//             char buffer[1024] = {0};
+//             proc_helper->recv_msg(proc_helper->pipes[1], buffer, sizeof(buffer));
+// std::cout << "proc recv buffer : " << buffer << std::endl;
+//             if(buffer[0] == 'e')
+//             {
+// std::cout << "ready exit!\r\n";
+//                 break;
+//             }
 
-        }
+//         }
+
+        sem_wait(m_sem);
+
 std::cout << "bussiness_proc_end!\r\n";
             m_thr_add_client_stop_flag = true;
             m_thr_epoll_solver_stop_flag = true;

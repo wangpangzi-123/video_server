@@ -6,8 +6,8 @@
 #include <atomic>
 #include <sys/types.h>
 #include <sys/wait.h>
-
-
+#include <semaphore.h>
+#include <fcntl.h>
 
 struct server
 {
@@ -17,7 +17,20 @@ struct server
           m_bussiness(nullptr)
     {
         //IP地址 与 port 初始化
-        
+            sem_name = "/my_semaphore";
+            sem = sem_open(sem_name, O_CREAT | O_EXCL, 0644, 0);  // 初始化为0
+            if (sem == SEM_FAILED) {
+            if (errno == EEXIST) {
+            // 信号量已经存在
+            std::cout << "Semaphore already exists.\n";
+            // 可以选择打开现有信号量
+            sem = sem_open(sem_name, 0);
+            if (sem == SEM_FAILED) {
+                perror("sem_open");
+                
+                }
+            } 
+        }
     }
 
     ~server()
@@ -34,8 +47,10 @@ struct server
         //子进程结束
         if(m_bussiness != nullptr)
         {
-            m_serv_proc_helper.send_msg(m_serv_proc_helper.pipes[0], "e");
-            close(m_serv_proc_helper.pipes[0]);
+            // m_serv_proc_helper.send_msg(m_serv_proc_helper.pipes[0], "e");
+            // close(m_serv_proc_helper.pipes[0]);
+
+            sem_post(sem);
             // m_bussiness->m_proc_self_stop_flag.store(true);
             bussiness* bussiness_tmp = m_bussiness;
 // std::cout << "no delete!\r\n";
@@ -43,13 +58,16 @@ struct server
             m_bussiness = nullptr;
             wait(NULL);
         }
+
+        sem_close(sem);
+        sem_unlink(sem_name);
     }
 
     //
     void server_client_proc_open()
     {
         m_bussiness = new client_proc_helper(&m_serv_proc_helper);
-        m_serv_proc_helper.set_process_func(&client_proc_helper::bussiness_proc_open, m_bussiness, &m_serv_proc_helper);
+        m_serv_proc_helper.set_process_func(&client_proc_helper::bussiness_proc_open, m_bussiness, &m_serv_proc_helper, sem);
         m_serv_proc_helper.start_process_func();
     }
 
@@ -71,6 +89,8 @@ struct server
     }
 
    
+    sem_t *sem;
+    const char *sem_name;
     //TODO: ip socket
     
     //
