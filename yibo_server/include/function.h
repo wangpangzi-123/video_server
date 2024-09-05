@@ -8,6 +8,48 @@
 #include <unistd.h>
 #include <check_error.h>
 
+#include <semaphore.h>
+#include <fcntl.h>
+
+struct sem_helper
+{
+	sem_helper() = delete;
+	
+	sem_helper(char* sem_name)
+		: m_sem_name(sem_name)
+	{
+		m_sem = sem_open(sem_name, O_CREAT | O_EXCL, 0644, 0);  // 初始化为0
+        if (m_sem == SEM_FAILED) {
+			if (errno == EEXIST){
+				// 可以选择打开现有信号量
+				m_sem = sem_open(sem_name, 0);
+				if (m_sem == SEM_FAILED){
+					perror("sem_open");
+				}
+			}
+		}
+	}
+
+	sem_helper(const sem_helper& that) = delete;
+	sem_helper& operator= (const sem_helper& that) = delete;
+
+	~sem_helper()
+	{
+		sem_close(m_sem);
+        sem_unlink(m_sem_name);
+	}
+
+	operator sem_t*(){ return m_sem; }
+	operator const char*() { return m_sem_name; }
+
+	void sem_helper_wait() { sem_wait(m_sem); }
+	void sem_helper_post() { sem_post(m_sem); }
+
+	sem_t* m_sem;
+    const char* m_sem_name;
+};
+
+
 class process_helper
 {
 public:
