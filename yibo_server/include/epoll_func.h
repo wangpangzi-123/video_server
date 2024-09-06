@@ -47,6 +47,7 @@ struct epoll_data_
 struct epoll_helper
 {
 	// using epoll_events = std::vector<epoll_event>;
+	int m_epoll = -1;
 	std::array<epoll_event, 128> epoll_events;
 
 	epoll_helper() {}
@@ -128,6 +129,4 @@ struct epoll_helper
 		}
 		return 0;
 	}
-
-	int m_epoll = -1;
 };

@@ -28,24 +28,25 @@ struct client_proc_helper : public bussiness
 
     virtual ~client_proc_helper() override
     {
-        {
-            std::lock_guard<std::mutex> lock(mtx);
-            m_thr_add_client_stop_flag = true;
-            m_thr_epoll_solver_stop_flag = true;
-        }
+        client_stop();
+    }
 
+    void client_stop()
+    {
+        m_thr_add_client_stop_flag = true;
+        m_thr_epoll_solver_stop_flag = true;
 
         if(m_bussiness_add_client.joinable())
         {
             m_bussiness_add_client.join();
         }
-        else{std::cout << "m_bussiness_add_client join failed!123\r\n";}
+        else{std::cout << "line: "<< __LINE__  << " m_bussiness_add_client join failed!\r\n";}
     
         if(m_bussiness_epoll_solver.joinable())
         {
             m_bussiness_epoll_solver.join();
         }
-        else{std::cout << "m_bussiness_epoll_solver join failed!123\r\n";}
+        else{std::cout << "line: "<< __LINE__  << " m_bussiness_epoll_solver join failed!\r\n";}
     }
 
     int bussiness_proc_open(sem_t* sem_begin_end, sem_t* sem_end_finish)
@@ -55,25 +56,9 @@ struct client_proc_helper : public bussiness
         
         sem_wait(sem_begin_end);
 
-// std::cout << "bussiness_proc_end!\r\n";
-//         m_thr_add_client_stop_flag = true;
-//         m_thr_epoll_solver_stop_flag = true;
-//         if(m_bussiness_add_client.joinable())
-//         {
-//             m_bussiness_add_client.join();
-//         }
-//         else{std::cout << "m_bussiness_add_client join failed!\r\n";}
-    
-//         if(m_bussiness_epoll_solver.joinable())
-//         {
-//             m_bussiness_epoll_solver.join();
-//         }
-//         else{std::cout << "m_bussiness_epoll_solver join failed!\r\n";}
-// std::cout << "sub process all thread join!\r\n";
+        client_stop();
 
         sem_post(sem_end_finish);
-// std::cout << "-------------------------------pro\r\n";
-
 
         return 0;
     }

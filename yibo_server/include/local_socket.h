@@ -6,6 +6,8 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <arpa/inet.h>
+#include <netdb.h>
 
 struct buffer : public std::string
 {
@@ -21,7 +23,8 @@ struct buffer : public std::string
 enum socket_attr {
 	SOCK_IS_SERVER = 1,	//
 	SOCK_IS_NONBLOCK = 2,
-	SOCK_IS_UDP	= 4
+	SOCK_IS_UDP	= 4,
+	SOCK_IS_IP  = 8
 };
 
 struct socket_param
@@ -95,13 +98,13 @@ struct socket_base
 
 	virtual ~socket_base() { close_socket(); }
 	
-	//��ʼ���׽���, bind, listen
+	
 	virtual int init(const socket_param& param) = 0;
-	//���ӷ�����, accept, connect
+	
 	virtual int link(socket_base** pClient) = 0;
-	//������Ϣ
+	
 	virtual int recv_buffer(buffer& recv_buffer) = 0;
-	//������Ϣ
+	
 	virtual int send_buffer(const buffer& send_buffer) = 0;
 
 	virtual int close_socket()
@@ -118,7 +121,6 @@ struct socket_base
 
 	virtual operator int() { return m_socket; }
 	virtual operator int() const { return m_socket; }
-
 	virtual int get_status(void) const { return status; }
 
 protected:
@@ -128,16 +130,16 @@ protected:
 };
 
 
-struct local_socket : public socket_base
+struct socket_ : public socket_base
 {
-	local_socket() : socket_base() {}
+	socket_() : socket_base() {}
 	
-	local_socket(int socket)
+	socket_(int socket)
 	{
 		m_socket = socket;
 	}
 	
-	virtual ~local_socket() { close_socket(); }
+	virtual ~socket_() { close_socket(); }
 
 	virtual int init(const socket_param& param) override
 	{
@@ -150,7 +152,7 @@ struct local_socket : public socket_base
 			return -2;
 
 		int ret = 0;
-		if (m_socket_param.m_attr & socket_attr::SOCK_IS_SERVER)	//����Ƿ�������Ҫ�� socket �� listen
+		if (m_socket_param.m_attr & socket_attr::SOCK_IS_SERVER)
 		{
 			ret = bind(m_socket, m_socket_param.get_un_address(), sizeof(sockaddr_un));
 			if (ret == -1)
@@ -183,13 +185,12 @@ struct local_socket : public socket_base
 		{
 			if (pClient == NULL)
 				return -2;
-			//����Ƿ������������accept����
 			socket_param param;
 			socklen_t len = sizeof(sockaddr_un);
 			int fd = accept(m_socket, param.get_un_address(), &len);
 			if (fd == -1)
 				return -3;
-			*pClient = new local_socket(fd);
+			*pClient = new socket_(fd);
 std::cout << __LINE__ << " accept : " << fd << std::endl;
 			if (pClient == NULL)
 				return -4;
@@ -203,7 +204,6 @@ std::cout << __LINE__ << " accept : " << fd << std::endl;
 		}
 		else
 		{
-			//����ǿͻ��ˣ������connect����
 			ret = connect(m_socket, m_socket_param.get_un_address(), sizeof(sockaddr_un));
 			if (ret < 0)
 			{
@@ -216,11 +216,6 @@ std::cout << __LINE__ << " accept : " << fd << std::endl;
 
 	virtual int recv_buffer(buffer& recv_buffer) override
 	{
-// 		if (status < 2 || status == -1)
-// 		{
-// std::cout << "recv_buffer status : " << status << std::endl;
-// 			return -1;
-// 		}
 		if (status == -1)
 		{
 std::cout << "recv_buffer status : " << status << std::endl;
@@ -244,7 +239,7 @@ std::cout << "recv_buffer status : " << status << std::endl;
 		}
 		return -3;
 	}
-	//������Ϣ
+	
 	virtual int send_buffer(const buffer& send_buffer) override
 	{
 		if (status < 2 || status == -1)
@@ -262,6 +257,8 @@ std::cout << "recv_buffer status : " << status << std::endl;
 		return 0;
 	}
 };
+
+
 
 
 

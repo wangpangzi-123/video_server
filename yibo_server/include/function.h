@@ -161,7 +161,7 @@ std::cout << " sub process end, pid = " << getpid() << std::endl;
 		}
 		else
 		{
-			std::cout << "sendmsg ret = " << send_ret << std::endl;
+			std::cout << "send fd ret = " << send_ret << std::endl;
 		}
         return 0;
     }
@@ -183,7 +183,7 @@ std::cout << " sub process end, pid = " << getpid() << std::endl;
 		ssize_t send_ret = 0;
 		if((send_ret = sendmsg(socket, &message, 0)) < 0)
 		{
-std::cout << "send msg failed123 = " << strerror(errno) << std::endl;
+std::cout << "send msg failed = " << strerror(errno) << std::endl;
 		}
         return send_ret;
 	}

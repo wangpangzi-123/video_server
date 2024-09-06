@@ -1,7 +1,11 @@
 #pragma once
 
+//self
 #include "bussiness.h"
 #include "function.h"
+#include "epoll_func.h"
+#include "check_error.h"
+
 #include <thread>
 #include <atomic>
 #include <sys/types.h>
@@ -19,6 +23,14 @@ struct server
           m_sem_helper_begin_end("sem_begin_end"),
           m_sem_helper_end_finish("sem_end_finish")
     {
+        // m_accept_epoll.create();
+        
+        //1、epoll create
+        CHECK_ERROR(m_accept_epoll.create);
+        //2、创建本地 socket 套接字
+        
+        //
+
     }
 
     ~server()
@@ -28,35 +40,19 @@ struct server
         if(m_serv_accept_thrd.joinable())
         {
             m_serv_accept_thrd.join();
-// std::cout << "server accept thr end!\r\n";
         }
         else{ std::cout << "m_serv_accept_thrd joinable failed!" << std::endl;}
         
         //子进程结束
-        // if(m_bussiness != nullptr)
-        // {
-            // m_serv_proc_helper.send_msg(m_serv_proc_helper.pipes[0], "e");
-            // close(m_serv_proc_helper.pipes[0]);
-// sem_post(sem);
-            // m_bussiness->m_proc_self_stop_flag.store(true);
-std::cout << "mmmmmmmmmm\r\n";
-            m_sem_helper_begin_end.sem_helper_post();
-            m_sem_helper_end_finish.sem_helper_wait();
+        m_sem_helper_begin_end.sem_helper_post();
+        m_sem_helper_end_finish.sem_helper_wait();
 
-            // bussiness* bussiness_tmp = m_bussiness;
-// std::cout << "no delete!\r\n";
-            // delete m_bussiness;
-            // m_bussiness = nullptr;
-            wait(NULL);
-        // }
-// sem_close(sem);
-// sem_unlink(sem_name);
+         wait(NULL);
     }
 
     //
     void server_client_proc_open()
     {
-        
         m_serv_proc_helper.set_process_func(&client_proc_helper::bussiness_proc_open, &m_bussiness, 
                                             (sem_t* )m_sem_helper_begin_end, (sem_t* )m_sem_helper_end_finish);
 
@@ -71,15 +67,45 @@ std::cout << "mmmmmmmmmm\r\n";
     //
     void server_accept_thr_func()
     {
+        ssize_t epoll_rtn = 0;
         while(!m_serv_accept_stop_flag.load())
         {
-            //TODO: epoll
+            //设置 epoll wait
+            epoll_rtn = m_accept_epoll.wait_event(10);
+            for(int i = 0; i < epoll_rtn; i++)
+            {
+                if (m_accept_epoll.epoll_events[i].events & EPOLLERR)
+                {
+                    std::cout << "events & EPOLLERR = 1" << std::endl;
+                    // m_thread.stop();
+                    break;
+                }
+                else if (m_accept_epoll.epoll_events[i].events & EPOLLIN)
+                {
+                    if (m_accept_epoll.epoll_events[i].data.ptr == socket_)
+                    {
+                        socket_base *ptr_client = nullptr;
+                        int r = socket_->link(&ptr_client);
+                        printf("%s(%d):[%s]ret=%d \n", __FILE__, __LINE__, __FUNCTION__, r);
+                        if (r < 0)
+                            continue;
+
+                        r = m_accept_epoll.add_event(*ptr_client, (void *)(ptr_client), EPOLLIN | EPOLLERR);
+                        printf("%s(%d):[%s]ret=%d \n", __FILE__, __LINE__, __FUNCTION__, r);
+                        if (r < 0)
+                        {
+                            delete ptr_client;
+                            continue;
+                        }
+                    }
+                }
+                std::cout << __LINE__ << " epoll events : " << m_accept_epoll.epoll_events[i].events << std::endl;
+            }
         }
     }
 
    
-    //子进程 信号量
-
+    //子进程结束 信号量
     sem_helper m_sem_helper_begin_end;
     sem_helper m_sem_helper_end_finish;
     //TODO: ip socket
@@ -93,4 +119,7 @@ std::cout << "mmmmmmmmmm\r\n";
     //thread_1
     std::atomic<bool> m_serv_accept_stop_flag;
     std::thread m_serv_accept_thrd;
+
+    //epoll
+    epoll_helper m_accept_epoll;
 };
