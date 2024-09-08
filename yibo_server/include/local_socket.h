@@ -130,16 +130,16 @@ protected:
 };
 
 
-struct socket_ : public socket_base
+struct local_socket : public socket_base
 {
-	socket_() : socket_base() {}
+	local_socket() : socket_base() {}
 	
-	socket_(int socket)
+	local_socket(int socket)
 	{
 		m_socket = socket;
 	}
 	
-	virtual ~socket_() { close_socket(); }
+	virtual ~local_socket() { close_socket(); }
 
 	virtual int init(const socket_param& param) override
 	{
@@ -190,7 +190,7 @@ struct socket_ : public socket_base
 			int fd = accept(m_socket, param.get_un_address(), &len);
 			if (fd == -1)
 				return -3;
-			*pClient = new socket_(fd);
+			*pClient = new local_socket(fd);
 std::cout << __LINE__ << " accept : " << fd << std::endl;
 			if (pClient == NULL)
 				return -4;

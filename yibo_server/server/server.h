@@ -11,7 +11,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-
+#include "socket.h"
 
 
 
@@ -29,23 +29,35 @@ struct server
         CHECK_ERROR(m_accept_epoll.create);
         //2、创建本地 socket 套接字
         
-        //
+        
+        // int attr |= (SOCK_IS_SERVER_ | SOCK_IS_IP_);
+
+        m_server_param.m_attr |= (SOCK_IS_SERVER_);
+        // m_server_param.m_attr |= (SOCK_IS_IP_);
+        m_server_param.init_local_param("./log/server.sock");
+
+std::cout << m_server_param.m_attr << std::endl;
+
+        m_server_socket.init(m_server_param);
+
+        // socket_param_ x("./log/server.sock", (SOCK_IS_SERVER_ | SOCK_IS_IP_));
+
 
     }
 
     ~server()
     {
         //accept 线程结束
-        m_serv_accept_stop_flag.store(true);
-        if(m_serv_accept_thrd.joinable())
-        {
-            m_serv_accept_thrd.join();
-        }
-        else{ std::cout << "m_serv_accept_thrd joinable failed!" << std::endl;}
+        // m_serv_accept_stop_flag.store(true);
+        // if(m_serv_accept_thrd.joinable())
+        // {
+        //     m_serv_accept_thrd.join();
+        // }
+        // else{ std::cout << "m_serv_accept_thrd joinable failed!" << std::endl;}
         
-        //子进程结束
-        m_sem_helper_begin_end.sem_helper_post();
-        m_sem_helper_end_finish.sem_helper_wait();
+        // //子进程结束
+        // m_sem_helper_begin_end.sem_helper_post();
+        // m_sem_helper_end_finish.sem_helper_wait();
 
          wait(NULL);
     }
@@ -82,22 +94,22 @@ struct server
                 }
                 else if (m_accept_epoll.epoll_events[i].events & EPOLLIN)
                 {
-                    if (m_accept_epoll.epoll_events[i].data.ptr == socket_)
-                    {
-                        socket_base *ptr_client = nullptr;
-                        int r = socket_->link(&ptr_client);
-                        printf("%s(%d):[%s]ret=%d \n", __FILE__, __LINE__, __FUNCTION__, r);
-                        if (r < 0)
-                            continue;
+                    // if (m_accept_epoll.epoll_events[i].data.ptr == socket_)
+                    // {
+                    //     socket_base *ptr_client = nullptr;
+                    //     int r = socket_->link(&ptr_client);
+                    //     printf("%s(%d):[%s]ret=%d \n", __FILE__, __LINE__, __FUNCTION__, r);
+                    //     if (r < 0)
+                    //         continue;
 
-                        r = m_accept_epoll.add_event(*ptr_client, (void *)(ptr_client), EPOLLIN | EPOLLERR);
-                        printf("%s(%d):[%s]ret=%d \n", __FILE__, __LINE__, __FUNCTION__, r);
-                        if (r < 0)
-                        {
-                            delete ptr_client;
-                            continue;
-                        }
-                    }
+                    //     r = m_accept_epoll.add_event(*ptr_client, (void *)(ptr_client), EPOLLIN | EPOLLERR);
+                    //     printf("%s(%d):[%s]ret=%d \n", __FILE__, __LINE__, __FUNCTION__, r);
+                    //     if (r < 0)
+                    //     {
+                    //         delete ptr_client;
+                    //         continue;
+                    //     }
+                    // }
                 }
                 std::cout << __LINE__ << " epoll events : " << m_accept_epoll.epoll_events[i].events << std::endl;
             }
@@ -108,7 +120,10 @@ struct server
     //子进程结束 信号量
     sem_helper m_sem_helper_begin_end;
     sem_helper m_sem_helper_end_finish;
+    
     //TODO: ip socket
+    socket_param_   m_server_param;
+    socket_inet    m_server_socket;
     
     //
     process_helper m_serv_proc_helper;

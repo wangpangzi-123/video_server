@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "/home/joe/yibo/y/yibo_server/run"
-  "/home/joe/yibo/y/yibo_server/run.pdb"
+  "/home/joe/yibo_server/yibo_server/run"
+  "/home/joe/yibo_server/yibo_server/run.pdb"
   "CMakeFiles/run.dir/bussiness/bussiness.cpp.o"
   "CMakeFiles/run.dir/bussiness/bussiness.cpp.o.d"
   "CMakeFiles/run.dir/include/Logger.cpp.o"
@@ -11,6 +11,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/run.dir/main.cpp.o.d"
   "CMakeFiles/run.dir/server/server.cpp.o"
   "CMakeFiles/run.dir/server/server.cpp.o.d"
+  "CMakeFiles/run.dir/socket/socket.cpp.o"
+  "CMakeFiles/run.dir/socket/socket.cpp.o.d"
 )
 
 # Per-language clean rules from dependency scanning.
