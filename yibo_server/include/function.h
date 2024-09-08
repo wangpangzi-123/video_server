@@ -50,6 +50,8 @@ struct sem_helper
 };
 
 
+//send-> pipes[0]
+//recv-> pipes[1]
 class process_helper
 {
 public:
@@ -82,9 +84,36 @@ std::cout << "create pipes failed, error_code = " << strerror(errno) << std::end
 		m_binder = std::bind(std::forward<function>(func), std::forward<Args>(args)...);
 	}
 
-	void close_pipe_1(){ close(pipes[1]); }
+	//改变读写端 阻塞状态
+	void set_fd_isblock(int& fd, bool state)
+	{
+		int option = fcntl(fd, F_GETFL, 0);
+		if(option < 0)
+		{
+			perror("F_GETFL : ");
+			return;
+		}
+		if(state)
+		{
+			option &= ~O_NONBLOCK;
+			fcntl(fd, F_SETFL, option);
+			// perror("F_GETFL : ");
+		}
+		else
+		{
+			option |= O_NONBLOCK;
+			fcntl(fd, F_SETFL, option);
+			// perror("F_GETFL : ");
+		}
+	}
 
-	void close_pipe_0(){ close(pipes[0]); }
+	void set_write_isblock(bool state){ set_fd_isblock(pipes[0], state); }
+
+	void set_read_isblock(bool state){ set_fd_isblock(pipes[1], state); }
+
+	void close_read(){ close(pipes[1]); }
+
+	void close_write(){ close(pipes[0]); }
 
 	int run_bind_func()
 	{
@@ -123,7 +152,7 @@ std::cout << " sub process end, pid = " << getpid() << std::endl;
 		}
 	}
 
-	int send_fd(int socket, int fd_to_send)
+	int send_fd(int fd_to_send)
 	{
 		struct msghdr message;
 		struct iovec iov;
@@ -152,7 +181,7 @@ std::cout << " sub process end, pid = " << getpid() << std::endl;
 		
 		*((int *) CMSG_DATA(control_message)) = fd_to_send;
 
-		int send_ret = sendmsg(socket, &message, 0);
+		int send_ret = sendmsg(pipes[0], &message, 0);
         // perror("sendmsg");
 		if(send_ret < 0)
 		{
@@ -188,7 +217,7 @@ std::cout << "send msg failed = " << strerror(errno) << std::endl;
         return send_ret;
 	}
 	
-	int recv_fd(int socket)
+	int recv_fd(void)
 	{
 		struct msghdr message;
 		struct iovec iov;
@@ -211,15 +240,25 @@ std::cout << "send msg failed = " << strerror(errno) << std::endl;
 		message.msg_control = control_buffer;
 		message.msg_controllen = sizeof(control_buffer);
 		
-		if (recvmsg(socket, &message, 0) < 0) {
-			perror("recvmsg");
-			exit(1);
+		if (recvmsg(pipes[1], &message, 0) < 0)
+		{
+			if(errno == EAGAIN || errno == EWOULDBLOCK)
+			{
+				return 0;	//未收到消息
+			}
+			else{
+				perror("recvmsg");
+				return -1;
+			}
+			// perror("recvmsg");
+			// exit(1);
 		}
 		
 		control_message = CMSG_FIRSTHDR(&message);
-		if (control_message && control_message->cmsg_level == SOL_SOCKET && control_message->cmsg_type == SCM_RIGHTS) {
+		if (control_message && control_message->cmsg_level == SOL_SOCKET && control_message->cmsg_type == SCM_RIGHTS) 
+		{
 			received_fd = *((int *) CMSG_DATA(control_message));
-std::cout << "received_fd = " << received_fd << std::endl;
+// std::cout << "received_fd = " << received_fd << std::endl;
 			return received_fd;
 		}
 		return -1;

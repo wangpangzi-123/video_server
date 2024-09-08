@@ -94,14 +94,26 @@ struct socket_param_
         void init_param(const bytes_buffer& ip, short port, unsigned short int sin_family = AF_INET)
         {
             addr_in.sin_addr.s_addr = inet_addr(ip);
-            addr_in.sin_port = port;
+            addr_in.sin_port = htons(port);
             addr_in.sin_family = sin_family;
         }
         sockaddr_in addr_in;
     };
 
     void init_inet_param(const bytes_buffer& ip, short port){ inet_param.init_param(ip, port); }
-    void init_local_param(const bytes_buffer& path) { local_param.init_param(path); }
+    
+    //需要判断地址是否存在，如果存在
+    void init_local_param(const bytes_buffer& path) 
+    { 
+        if(access(path, W_OK | R_OK) == 0)
+        {
+            if(remove(path) == 0)
+            {
+std::cout << path <<" delete success!\r\n";
+            }
+        }
+        local_param.init_param(path); 
+    }
 
     sockaddr* get_in_address()  { return (sockaddr*)&(inet_param.addr_in); }
 	sockaddr* get_un_address()  { return (sockaddr*)&(local_param.addr_un); }
@@ -155,26 +167,28 @@ struct socket_base_
 
     int base_init(int& socket_, socket_param_& param_)
     {
-std::cout << "base _init \r\n";
         //1、确定 socket 类型（报文/流式）
         int ret = 0;
         int type = (param_.m_attr & SOCK_IS_UDP_) ? SOCK_DGRAM : SOCK_STREAM;
-
+// std::cout << "type : " << type << std::endl;
         if(param_.m_attr & SOCK_IS_IP_){ 
             socket_ = socket(PF_INET, type, 0);
-std::cout << __LINE__ <<"socket!\r\n";
+// std::cout << __LINE__ <<"socket!\r\n";
 if(socket_ == -1){ std::cout << __FILE__<< " (" << __LINE__ << ") : " << socket_ <<"\r\n"; return -1;}
+                    //设置地址重用
+            int on = 1;
+            setsockopt(socket_, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+            setsockopt(socket_, SOL_SOCKET, SO_REUSEPORT, &on, sizeof(on));
             }
         else{ 
             socket_ = socket(PF_LOCAL, type, 0); 
-std::cout << __LINE__ <<"socket!\r\n";
+// std::cout << __LINE__ <<"socket!\r\n";
 if(socket_ == -1){ std::cout << __FILE__<< " (" << __LINE__ << ") : " << socket_ <<"\r\n"; return -1;}
             }
 
         //2、设置 socket 类型 (阻塞/非阻塞)
         if(param_.m_attr & SOCK_IS_NONBLOCK_)
         {
-std::cout << __LINE__ <<"socket!\r\n";
             int option = fcntl(socket_, F_GETFL);
 if(socket_ == -1){ std::cout << __FILE__<< " (" << __LINE__ << ") : " << option <<"\r\n"; return -2;}
             option |= O_NONBLOCK;
@@ -184,7 +198,7 @@ if(ret == -1){ std::cout << __FILE__<< " (" << __LINE__ << ") : " << ret <<"\r\n
 
         //3、bind socket
         if(param_.m_attr & SOCK_IS_IP_){
- std::cout << "123\r\n";
+// std::cout << "bind finish\r\n";
             ret = bind(socket_, param_.get_in_address(), sizeof(sockaddr_in)); 
             if(ret == -1){ std::cout << __FILE__<< " (" << __LINE__ << ") : " << ret <<"\r\n"; return -4;}
         }
@@ -193,17 +207,22 @@ if(ret == -1){ std::cout << __FILE__<< " (" << __LINE__ << ") : " << ret <<"\r\n
 if(ret == -1){ std::cout << __FILE__<< " (" << __LINE__ << ") : " << strerror(errno) <<"\r\n"; return -4;}
             }
 
-std::cout << "111111111111111\r\n";
-        //4、listen
-        ret = listen(socket_, 32);
-if(ret == -1){ std::cout << __FILE__<< " (" << __LINE__ << ") : " << ret <<"\r\n"; return -5;}
+
+        //4、listen 如果 UDP 则不需要 listen
+        if(!(param_.m_attr & SOCK_IS_UDP_))
+        {
+
+            ret = listen(socket_, 32);
+if(ret == -1){ std::cout << __FILE__<< " (" << __LINE__ << ") : " << ret << " " << strerror(errno) <<"\r\n"; return -5;}
+        }
+
         return 0;
     }
 
 
     //如果 为 SERVER_SOCKET , 返回 accept 后的 fd
     //如果 为 CLIENT_SOCKET , 直接 connect
-    int base_link(int& socket_, socket_param_& param_, int* fd_ = nullptr, socket_param_* client_param_ = nullptr)
+    int base_link(int& socket_, socket_param_& param_, int* fd_ = nullptr)
     {
         int ret = 0;
         if(socket_ == -1) return -1;
@@ -215,14 +234,15 @@ if(socket_ == -1){ std::cout << "not init socket!\r\n"; }
             socklen_t len = 0;
             if(param_.m_attr & SOCK_IS_IP_)
             {
-                (*client_param_).m_attr |= SOCK_IS_IP_;
                 len = sizeof(sockaddr_in);
-                client_fd = accept(socket_, (*client_param_).get_in_address(), &len);
+                client_fd = accept(socket_, param_.get_in_address(), &len);
+// std::cout << "accept finish " << "  " << __LINE__ << "client_fd : " << client_fd << std::endl; 
             }
             else
             {
                 len = sizeof(sockaddr_un);
-                client_fd = accept(socket_, (*client_param_).get_un_address(), &len);
+                client_fd = accept(socket_, param_.get_un_address(), &len);
+// std::cout << "accept finish " << "  " << __LINE__ << std::endl; 
             }
             *fd_ = client_fd;
         }
@@ -276,7 +296,6 @@ if(socket_ == -1){ std::cout << "not init socket!\r\n"; }
     // virtual int link(socket_base_** client_ptr = nullptr) = 0;
     virtual int link(std::unique_ptr<socket_base_>* client_ptr = nullptr) = 0;
 
-
     //send
     virtual ssize_t send(const bytes_buffer& send_buffer) = 0;
 
@@ -284,7 +303,7 @@ if(socket_ == -1){ std::cout << "not init socket!\r\n"; }
     virtual ssize_t recv(const bytes_buffer& recv_buffer) = 0;
 
     //close
-    virtual int close(void) = 0;
+    virtual void close(void) = 0;
 };
 
 struct socket_local : public socket_base_
@@ -295,7 +314,7 @@ struct socket_local : public socket_base_
     // socket_local(const bytes_buffer& path) : 
     socket_local(int socket_) : m_local_socket(socket_){}
 
-    virtual ~socket_local(){}
+    virtual ~socket_local(){close();}
     socket_local(const socket_local& that){}
     socket_local& operator=(const socket_local& that) {}
 
@@ -303,9 +322,12 @@ struct socket_local : public socket_base_
         //socket
         //bind
         //listen
-    virtual int init(socket_param_& param){ 
+    virtual int init(socket_param_& param)
+    { 
         // m_local_param = param;
-        base_init(m_local_socket, m_local_param); }
+        int rtn = base_init(m_local_socket, m_local_param); 
+        return rtn;
+    }
 
     virtual int link(std::unique_ptr<socket_base_>* client_ptr = nullptr)
     {
@@ -314,7 +336,7 @@ struct socket_local : public socket_base_
         {
             int client_fd = -1;
             socket_param_ client_socket_param;
-            ret = base_link(m_local_socket, m_local_param, &client_fd, &client_socket_param);
+            ret = base_link(m_local_socket, m_local_param, &client_fd);
             if (client_fd > 0) {
                 auto temp_ptr = std::make_unique<socket_local>(client_fd);
                 ret = temp_ptr->init(client_socket_param);
@@ -333,13 +355,11 @@ struct socket_local : public socket_base_
         return ret;
     }
 
-
     virtual ssize_t send(const bytes_buffer& send_buffer){ return base_send(m_local_socket, send_buffer); }
 
     virtual ssize_t recv(const bytes_buffer& recv_buffer){ return base_recv(m_local_socket, recv_buffer); }
 
-
-    virtual int close(void)
+    virtual void close(void) 
     {
         if(m_local_param.m_attr & SOCK_IS_SERVER_)
         {
@@ -359,49 +379,55 @@ struct socket_inet : public socket_base_
     
     socket_inet() : socket_base_(), m_inet_socket(-1) {}
     socket_inet(int socket_) : m_inet_socket(socket_){}
-    virtual ~socket_inet(){}
-    socket_inet(const socket_inet& that){}
-    socket_inet& operator=(const socket_inet& that) {}
+    virtual ~socket_inet(){close();}
+    socket_inet(const socket_inet& that){
+// std::cout << "socket_inet(const socket_inet& that) call\r\n ";
+        m_inet_param = that.m_inet_param;
+        m_inet_socket = that.m_inet_socket;
+    }
+    socket_inet& operator=(const socket_inet& that) {
+// std::cout << "socket_inet& operator=(const socket_inet& that) call\r\n ";
+        m_inet_param = that.m_inet_param;
+        m_inet_socket = that.m_inet_socket;
+        return *this;
+    }
 
+    int get_inet_socket() const {
+        // std::cout << "m_inet_socket =  " << m_inet_socket << std::endl;
+        return m_inet_socket; }
 
-    virtual int init(socket_param_& param){ 
+    operator int(){return m_inet_socket;}
+
+    virtual int init(socket_param_& param) override
+    { 
         m_inet_param = param;
-        int rtn = base_init(m_inet_socket, m_inet_param); 
-        return rtn;
-        }
+        int rtn = base_init(m_inet_socket, m_inet_param);
 
-    virtual int link(std::unique_ptr<socket_base_>* client_ptr = nullptr)
+        return rtn;
+    }
+
+    virtual int link(std::unique_ptr<socket_base_>* client_ptr = nullptr) override
     {
-        int ret = 0;
+
         if(m_inet_param.m_attr & SOCK_IS_SERVER_)
         {
             int client_fd = -1;
-            socket_param_ client_socket_param;
-            ret = base_link(m_inet_socket, m_inet_param, &client_fd, &client_socket_param);
-            if (client_fd > 0) {
-                auto temp_ptr = std::make_unique<socket_inet>(client_fd);
-                ret = temp_ptr->init(client_socket_param);
-                if (ret != 0) {
-                    return -1;
-                }
-                if (client_ptr) {
-                    *client_ptr = std::move(temp_ptr);
-                }
-            }
+            base_link(m_inet_socket, m_inet_param, &client_fd);
+            if (client_fd > 0) { return client_fd; }
+            else{ return -1;}
         }
         else
         {
             base_link(m_inet_socket, m_inet_param);
         }
-        return ret;
+        return 0;
     }
 
-    virtual ssize_t send(const bytes_buffer& send_buffer){ return base_send(m_inet_socket, send_buffer); }
+    virtual ssize_t send(const bytes_buffer& send_buffer) override{ return base_send(m_inet_socket, send_buffer); }
 
-    virtual ssize_t recv(const bytes_buffer& recv_buffer){ return base_recv(m_inet_socket, recv_buffer); }
+    virtual ssize_t recv(const bytes_buffer& recv_buffer) override{ return base_recv(m_inet_socket, recv_buffer); }
 
-
-    virtual int close(void)
+    virtual void close(void) override
     {
         int fd = m_inet_socket;
         m_inet_socket = -1;

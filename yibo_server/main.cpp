@@ -71,17 +71,21 @@ int main() {
 
 //test_server
     server  ser;
-    // ser.server_accept_open();
-    // ser.server_client_proc_open();
+    ser.server_accept_open();
+    ser.server_client_proc_open();
 
 
-    // sleep(1);
+    // sleep(5);
 
 
     // socket_param_ param1;
     // socket_param_ param2 = param1;
 
     // param2
+    while(1)
+    {
+
+    }
 
 
     return 0;
@@ -164,3 +168,5 @@ int main() {
 
 //     return 0;
 // }
+
+
