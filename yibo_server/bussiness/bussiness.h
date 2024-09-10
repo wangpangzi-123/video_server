@@ -10,6 +10,10 @@
 // #include "server.h"
 #include "epoll_func.h"
 #include "socket.h"
+#include "thread_pool.h"
+
+void waiting_thread();
+void notifying_thread();
 
 struct bussiness
 {
@@ -22,16 +26,56 @@ struct bussiness
     
     std::atomic<bool> m_proc_self_stop_flag;
     process_helper* m_proc_helper;
+    
 };
 
 struct client_proc_helper : public bussiness
 {
+
+    std::condition_variable cv_lock_;
+    std::mutex cv_mutex_;
+    std::atomic<bool> cv_wake_ = false;
+    std::atomic<bool> cv_bool_ = false;
+    std::thread m_test_thr;
+
+    void bussiness_proc(socket_inet* sock)
+    {
+std::cout << __LINE__ << "enter bussiness_proc\r\n";
+        bytes_buffer buffer(1024);
+        // bytes_buffer& buf(std::string("23")); 
+        sock->recv(buffer);
+std::cout << "m thread : " << std::this_thread::get_id() << "  recv buffer : " << buffer << std::endl;
+        std::string send_buff = "send: " + buffer;
+        // send(socket, send_buff.data(), send_buff.size(), 0);
+        sock->send(send_buff.data());
+
+// std::cout << "hehlllljlj\r\n";
+    }
+
+    void test_thr_while()
+    {
+        while(!cv_bool_.load())
+        {
+std::cout << "test_thr_wake begin! \r\n";
+            std::unique_lock<std::mutex> uni_que(cv_mutex_);
+            cv_lock_.wait(uni_que, [this](){
+std::cout << "line : " << __LINE__ << std::endl;
+                return cv_wake_.load();
+            });
+            
+            cv_wake_.store(false);
+std::cout << __LINE__ << " " << "test_thr_wake !\r\n";
+        }
+    }
+
+    // void waiting_thread();
+    // void notifying_thread();
+
     client_proc_helper()
         : m_thr_add_client_stop_flag(false),
           m_thr_epoll_solver_stop_flag(false)
     {
-        CHECK_ERROR(m_solver_epoll.create);
-
+        CHECK_ERROR(m_solver_epoll.create); 
     }
     
 
@@ -39,7 +83,15 @@ struct client_proc_helper : public bussiness
 
     void client_stop()
     {
+        //test
+        cv_bool_ = true;
+        if(m_test_thr.joinable())
+        {
+            m_test_thr.join();
+        }
+
 // std::cout << "client_ stop\r\n";
+
         m_thr_add_client_stop_flag = true;
         m_thr_epoll_solver_stop_flag = true;
 
@@ -58,9 +110,21 @@ struct client_proc_helper : public bussiness
 
     int bussiness_proc_open(process_helper* process_helper, sem_t* sem_begin_end_, sem_t* sem_end_finish_)
     {
+        
+        // std::thread t1(&client_proc_helper::waiting_thread, this);
+// std::cout << "1111\r\n";
+        // std::thread t2(notifying_thread);
+
+        // t2.join();
+        
+        
         m_proc_helper = process_helper;
         m_bussiness_add_client = std::thread(&client_proc_helper::thr_add_client_func, this);
         m_bussiness_epoll_solver = std::thread(&client_proc_helper::thr_epoll_solver_func, this);
+
+
+        // t1.join();
+
         
         sem_wait(sem_begin_end_);
 
@@ -104,6 +168,8 @@ std::cout << __FILE__  <<  " : " << __LINE__ << " error !!!! \r\n";
     void thr_epoll_solver_func(void)
     {
         ssize_t epoll_rtn;
+        // m_thr_pool_test.start();
+        thread_pool::instance().start();
 // std::cout << "enter thr_epoll_solver_func\r\n";
         while(!m_thr_epoll_solver_stop_flag)
         {
@@ -119,19 +185,22 @@ std::cout << __FILE__  <<  " : " << __LINE__ << " error !!!! \r\n";
                 else if (m_solver_epoll.epoll_events[i].events & EPOLLIN)
                 {
                     int solver_fd = m_solver_epoll.epoll_events[i].data.fd;
-// std::cout << "solver_fd : " << solver_fd << std::endl;
-                    // socket_inet* ptr = (socket_inet*)m_solver_epoll.epoll_events[i].data.ptr;
-// std::cout << "solver_fd : " << ptr->m_inet_socket << std::endl;
                     if(auto it = clients.find(solver_fd) != clients.end())
                     {
-                        std::cout << clients[solver_fd]->m_inet_socket << std::endl;
-                        char buffer[1024] = {0};
-                        read(clients[solver_fd]->m_inet_socket, buffer, sizeof(buffer));
-                        std::cout << buffer << std::endl;
+
+                        // thread_pool::instance().call_wake();
+
+                        // char buffer[1024] = {0};
+                        // read(clients[solver_fd]->m_inet_socket, buffer, sizeof(buffer));
+// std::cout << __LINE__ << " " << "recv buffer : " << buffer << std::endl;
+                        std::future<void> rtn(thread_pool::instance().submit(&client_proc_helper::bussiness_proc, this, clients[solver_fd].get()));
+                        // rtn.get();
+                        // m_thr_pool_test.wake();
                     }
                 }
             }
         }
+        thread_pool::instance().stop();
         std::cout << "thr_epoll_func end!\r\n";
     }
 
@@ -150,8 +219,13 @@ std::cout << __FILE__  <<  " : " << __LINE__ << " error !!!! \r\n";
     std::atomic<bool> m_thr_epoll_solver_stop_flag;
     std::thread m_bussiness_epoll_solver;
 
+
+
+
     //thread_pool
     //线程池-> 处理任务
+    // thread_pool_test m_thr_pool_test;
+    // thread_pool m_bussiness_pool;
 };
 
 

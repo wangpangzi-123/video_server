@@ -16,7 +16,10 @@ struct bytes_buffer : public std::string
     bytes_buffer() : std::string() {}
 	bytes_buffer(const char* data) : std::string(data){}
 	bytes_buffer(size_t size) : std::string(size, '\0') {}
-	
+	bytes_buffer(std::string&& string) : std::string(string) {}
+
+
+
 	operator char* () { return (char*)c_str(); }
 	operator char* () const { return (char*)c_str(); }
 	operator const char* () const { return c_str(); }
@@ -276,7 +279,7 @@ if(socket_ == -1){ std::cout << "not init socket!\r\n"; }
         return alread_send_size;
     }
 
-    virtual ssize_t base_recv(int& socket_, const bytes_buffer& recv_buffer)
+    virtual ssize_t base_recv(int& socket_, bytes_buffer& recv_buffer)
     {
         if(socket_ == -1) return -1;
         ssize_t recv_index = read(socket_, (char*)recv_buffer, sizeof(recv_buffer));
@@ -300,7 +303,7 @@ if(socket_ == -1){ std::cout << "not init socket!\r\n"; }
     virtual ssize_t send(const bytes_buffer& send_buffer) = 0;
 
     //recv
-    virtual ssize_t recv(const bytes_buffer& recv_buffer) = 0;
+    virtual ssize_t recv(bytes_buffer& recv_buffer) = 0;
 
     //close
     virtual void close(void) = 0;
@@ -357,7 +360,7 @@ struct socket_local : public socket_base_
 
     virtual ssize_t send(const bytes_buffer& send_buffer){ return base_send(m_local_socket, send_buffer); }
 
-    virtual ssize_t recv(const bytes_buffer& recv_buffer){ return base_recv(m_local_socket, recv_buffer); }
+    virtual ssize_t recv(bytes_buffer& recv_buffer){ return base_recv(m_local_socket, recv_buffer); }
 
     virtual void close(void) 
     {
@@ -425,7 +428,7 @@ struct socket_inet : public socket_base_
 
     virtual ssize_t send(const bytes_buffer& send_buffer) override{ return base_send(m_inet_socket, send_buffer); }
 
-    virtual ssize_t recv(const bytes_buffer& recv_buffer) override{ return base_recv(m_inet_socket, recv_buffer); }
+    virtual ssize_t recv(bytes_buffer& recv_buffer) override{ return base_recv(m_inet_socket, recv_buffer); }
 
     virtual void close(void) override
     {

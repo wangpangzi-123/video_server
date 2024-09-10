@@ -37,7 +37,7 @@ cmake_minimum_required(VERSION 3.12)
 
 PROJECT(YIBO_SERVER LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
@@ -47,7 +47,8 @@ set(EXECUTE_OBJ run)
 include_directories(include 
                     server
                     bussiness
-                    socket)
+                    socket
+                    thread_pool)
 
 #源码添加
 aux_source_directory(. SOURCE)
@@ -60,10 +61,13 @@ aux_source_directory(bussiness SOURCE_BUSSINESS)
 
 aux_source_directory(socket SOURCE_SOCKET)
 
+aux_source_directory(thread_pool SOUCE_THREAD_POOL)
+
 #执行目标
 add_executable(${EXECUTE_OBJ} 
                 ${SOURCE} 
                 ${SOURCE_INCLUDE}
                 ${SOURCE_SERVER}
                 ${SOURCE_BUSSINESS}
-                ${SOURCE_SOCKET})
+                ${SOURCE_SOCKET}
+                ${SOUCE_THREAD_POOL})

@@ -13,6 +13,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/run.dir/server/server.cpp.o.d"
   "CMakeFiles/run.dir/socket/socket.cpp.o"
   "CMakeFiles/run.dir/socket/socket.cpp.o.d"
+  "CMakeFiles/run.dir/thread_pool/thread_pool.cpp.o"
+  "CMakeFiles/run.dir/thread_pool/thread_pool.cpp.o.d"
 )
 
 # Per-language clean rules from dependency scanning.

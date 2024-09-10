@@ -273,6 +273,30 @@ socket/socket.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/socket/socket.cpp.s
 .PHONY : socket/socket.cpp.s
 
+thread_pool/thread_pool.o: thread_pool/thread_pool.cpp.o
+.PHONY : thread_pool/thread_pool.o
+
+# target to build an object file
+thread_pool/thread_pool.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/thread_pool/thread_pool.cpp.o
+.PHONY : thread_pool/thread_pool.cpp.o
+
+thread_pool/thread_pool.i: thread_pool/thread_pool.cpp.i
+.PHONY : thread_pool/thread_pool.i
+
+# target to preprocess a source file
+thread_pool/thread_pool.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/thread_pool/thread_pool.cpp.i
+.PHONY : thread_pool/thread_pool.cpp.i
+
+thread_pool/thread_pool.s: thread_pool/thread_pool.cpp.s
+.PHONY : thread_pool/thread_pool.s
+
+# target to generate assembly for a file
+thread_pool/thread_pool.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/thread_pool/thread_pool.cpp.s
+.PHONY : thread_pool/thread_pool.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -300,6 +324,9 @@ help:
 	@echo "... socket/socket.o"
 	@echo "... socket/socket.i"
 	@echo "... socket/socket.s"
+	@echo "... thread_pool/thread_pool.o"
+	@echo "... thread_pool/thread_pool.i"
+	@echo "... thread_pool/thread_pool.s"
 .PHONY : help
 
 

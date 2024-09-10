@@ -125,48 +125,93 @@ int main() {
 
 
 // #include <iostream>
+// #include <condition_variable>
+// #include <mutex>
 // #include <thread>
+// #include <vector>
+// #include <functional>
+// #include <future>
+// #include <queue>
+// #include <memory>
 // #include <atomic>
+// #include <stdlib.h>
 
-// class Worker {
-// public:
-//     Worker() : running(true) {}
+// struct thread_pool_test
+// {
+//     std::mutex                  m_thr_pool_mutex;
+//     std::condition_variable     m_thr_pool_condition_var;
+//     std::atomic<bool>           m_stop;
 
-//     void start() {
-//         workerThread = std::thread(&Worker::run, this);
-//     }
+//     //测试用
+//     std::atomic<bool>           m_wake;
+//     std::thread                 thr;
 
-//     void stop() {
-//         running = false; // 通知线程退出
-//         if (workerThread.joinable()) {
-//             workerThread.join();
+//     thread_pool_test() : m_stop(false), m_wake(false){}
+
+//     ~thread_pool_test()
+//     {
+//         stop();
+//         if(thr.joinable())
+//         {
+//             thr.join();
 //         }
 //     }
 
-// private:
-//     void run() {
-//         while (running) {
-//             // 执行任务
-//             std::cout << "Working..." << std::endl;
-//             std::this_thread::sleep_for(std::chrono::milliseconds(500));
-//         }
-//         std::cout <<"thread stop working \r\n";
+//     void stop()
+//     {
+//         m_stop = true;
+//         m_wake = true;
+//         m_thr_pool_condition_var.notify_one();
 //     }
 
-//     std::thread workerThread;
-//     std::atomic<bool> running; // 使用atomic保证线程安全
+//     void start()
+//     {
+
+//         thr = std::thread([this]()
+//                           {
+//                               std::cout << __FILE__ << "  " << "thr start!\r\n";
+//                               while(!m_stop)
+//                               {
+//                                   std::unique_lock<std::mutex> unique_lock_(m_thr_pool_mutex);
+//                                   m_thr_pool_condition_var.wait(unique_lock_, [&]()
+//                                   {
+//                                       return this->m_wake.load();
+//                                   });
+
+//                                   m_wake.store(false);
+
+//                                   std::cout << __FILE__ << "  " << "thr wake!\r\n";
+//                               }
+//                           });
+//     }
+
+//     void wake()
+//     {
+//         m_wake.store(true);
+//         m_thr_pool_condition_var.notify_one();
+//     }
 // };
 
+
+
 // int main() {
-//     Worker worker;
-//     worker.start();
 
-//     std::this_thread::sleep_for(std::chrono::seconds(3));
 
-//     worker.stop(); // 停止工作线程
-//     std::cout << "Worker stopped." << std::endl;
+//     thread_pool_test t;
+
+//     t.start();
+
+//     t.wake();
+
+//     while(1)
+//     {
+//         t.wake();
+//         int i = 100000;
+//         while(i != 0) {
+//             i--;
+//         }
+//     }
+
 
 //     return 0;
 // }
-
-
