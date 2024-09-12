@@ -170,6 +170,7 @@
 #include <string.h>
 #include <assert.h>
 #include <time.h>
+#include <string>
 
 static http_parser *parser;
  
@@ -195,6 +196,7 @@ int on_message_complete(http_parser* _) {
 int on_url(http_parser* _, const char* at, size_t length) {
   (void)_;
   printf("Url: %.*s\n", (int)length, at);
+  // printf("---  %s   ---\r\n", at);
  
  
   return 0;
@@ -231,15 +233,29 @@ int main() {
     parser_set.on_message_complete = on_message_complete;
  
  
-    char  buf[1024]="GET /a/b/c/d HTTP/1.1";
+  // std::string	str = "GET /favicon.ico HTTP/1.1\r\n"
+	// 	"Host: 0.0.0.0=5000\r\n"
+	// 	"User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9) Gecko/2008061015 Firefox/3.0\r\n"
+	// 	"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8\r\n";
+
+  std::string	str = "GET /favicon.ico HTTP/1.1\r\n"
+		"Host: 0.0.0.0=5000\r\n"
+		"User-Agent: Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9) Gecko/2008061015 Firefox/3.0\r\n"
+		"Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*; q = 0.8\r\n"
+		"Accept-Language: en-us,en;q=0.5\r\n"
+		"Accept-Encoding: gzip,deflate\r\n"
+		"Accept-Charset: ISO-8859-1,utf-8;q=0.7,*;q=0.7\r\n"
+		"Keep-Alive: 300\r\n"
+		"Connection: keep-alive\r\n"
+		"\r\n";
  
 	size_t parsed;
 	parser = (http_parser*)malloc(sizeof(http_parser)); // 分配一个http_parser
 			 
 	http_parser_init(parser, HTTP_REQUEST); // 初始化parser为Request类型
-	parsed = http_parser_execute(parser, &parser_set, buf, strlen(buf)); // 执行解析过程
+	parsed = http_parser_execute(parser, &parser_set, str.c_str(), str.size()); // 执行解析过程
 	
-	http_parser_execute(parser, &parser_set, buf, 0); // 信息读取完毕
+	http_parser_execute(parser, &parser_set, str.c_str(), 0); // 信息读取完毕
  
 	free(parser);
 	parser = NULL;

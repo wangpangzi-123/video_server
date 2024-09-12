@@ -155,7 +155,6 @@ std::cout << __LINE__ << " " << "test_thr_wake !\r\n";
                 recv_accept_epoll_data.m_data.fd = recv_client_fd;
                 // recv_accept_epoll_data.m_data.ptr = clients[recv_client_fd].get();
                 int rtn = m_solver_epoll.add_event(recv_client_fd, recv_accept_epoll_data, recv_accept_epoll_event);
-            
             }
             else if(recv_client_fd < 0)  //接收错误！！！
             {
@@ -218,8 +217,6 @@ std::cout << __FILE__  <<  " : " << __LINE__ << " error !!!! \r\n";
     //thread_2
     std::atomic<bool> m_thr_epoll_solver_stop_flag;
     std::thread m_bussiness_epoll_solver;
-
-
 
 
     //thread_pool
