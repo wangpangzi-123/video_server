@@ -9,6 +9,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/home/joe/yibo_server/yibo_server/bussiness/bussiness.cpp" "CMakeFiles/run.dir/bussiness/bussiness.cpp.o" "gcc" "CMakeFiles/run.dir/bussiness/bussiness.cpp.o.d"
+  "/home/joe/yibo_server/yibo_server/http_parser/http_parser.cpp" "CMakeFiles/run.dir/http_parser/http_parser.cpp.o" "gcc" "CMakeFiles/run.dir/http_parser/http_parser.cpp.o.d"
   "/home/joe/yibo_server/yibo_server/include/Logger.cpp" "CMakeFiles/run.dir/include/Logger.cpp.o" "gcc" "CMakeFiles/run.dir/include/Logger.cpp.o.d"
   "/home/joe/yibo_server/yibo_server/include/check_error.cpp" "CMakeFiles/run.dir/include/check_error.cpp.o" "gcc" "CMakeFiles/run.dir/include/check_error.cpp.o.d"
   "/home/joe/yibo_server/yibo_server/main.cpp" "CMakeFiles/run.dir/main.cpp.o" "gcc" "CMakeFiles/run.dir/main.cpp.o.d"

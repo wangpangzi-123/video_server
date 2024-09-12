@@ -153,6 +153,30 @@ bussiness/bussiness.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/bussiness/bussiness.cpp.s
 .PHONY : bussiness/bussiness.cpp.s
 
+http_parser/http_parser.o: http_parser/http_parser.cpp.o
+.PHONY : http_parser/http_parser.o
+
+# target to build an object file
+http_parser/http_parser.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/http_parser/http_parser.cpp.o
+.PHONY : http_parser/http_parser.cpp.o
+
+http_parser/http_parser.i: http_parser/http_parser.cpp.i
+.PHONY : http_parser/http_parser.i
+
+# target to preprocess a source file
+http_parser/http_parser.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/http_parser/http_parser.cpp.i
+.PHONY : http_parser/http_parser.cpp.i
+
+http_parser/http_parser.s: http_parser/http_parser.cpp.s
+.PHONY : http_parser/http_parser.s
+
+# target to generate assembly for a file
+http_parser/http_parser.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run.dir/build.make CMakeFiles/run.dir/http_parser/http_parser.cpp.s
+.PHONY : http_parser/http_parser.cpp.s
+
 include/Logger.o: include/Logger.cpp.o
 .PHONY : include/Logger.o
 
@@ -309,6 +333,9 @@ help:
 	@echo "... bussiness/bussiness.o"
 	@echo "... bussiness/bussiness.i"
 	@echo "... bussiness/bussiness.s"
+	@echo "... http_parser/http_parser.o"
+	@echo "... http_parser/http_parser.i"
+	@echo "... http_parser/http_parser.s"
 	@echo "... include/Logger.o"
 	@echo "... include/Logger.i"
 	@echo "... include/Logger.s"

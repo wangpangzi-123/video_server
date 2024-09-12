@@ -328,6 +328,47 @@ CMakeFiles/run.dir/bussiness/bussiness.cpp.o: /home/joe/yibo_server/yibo_server/
   /usr/lib/gcc/x86_64-redhat-linux/14/include/stddef.h \
   /usr/lib/gcc/x86_64-redhat-linux/14/include/stdint.h
 
+CMakeFiles/run.dir/http_parser/http_parser.cpp.o: /home/joe/yibo_server/yibo_server/http_parser/http_parser.cpp \
+  /home/joe/yibo_server/yibo_server/http_parser/http_parser.h \
+  /usr/include/assert.h \
+  /usr/include/bits/endian.h \
+  /usr/include/bits/endianness.h \
+  /usr/include/bits/libc-header-start.h \
+  /usr/include/bits/local_lim.h \
+  /usr/include/bits/long-double.h \
+  /usr/include/bits/posix1_lim.h \
+  /usr/include/bits/posix2_lim.h \
+  /usr/include/bits/pthread_stack_min-dynamic.h \
+  /usr/include/bits/stdint-intn.h \
+  /usr/include/bits/stdint-least.h \
+  /usr/include/bits/stdint-uintn.h \
+  /usr/include/bits/time64.h \
+  /usr/include/bits/timesize.h \
+  /usr/include/bits/types.h \
+  /usr/include/bits/types/__locale_t.h \
+  /usr/include/bits/types/locale_t.h \
+  /usr/include/bits/typesizes.h \
+  /usr/include/bits/uio_lim.h \
+  /usr/include/bits/wchar.h \
+  /usr/include/bits/wordsize.h \
+  /usr/include/bits/xopen_lim.h \
+  /usr/include/ctype.h \
+  /usr/include/features-time64.h \
+  /usr/include/features.h \
+  /usr/include/gnu/stubs-64.h \
+  /usr/include/gnu/stubs.h \
+  /usr/include/limits.h \
+  /usr/include/linux/limits.h \
+  /usr/include/stdc-predef.h \
+  /usr/include/stdint.h \
+  /usr/include/string.h \
+  /usr/include/strings.h \
+  /usr/include/sys/cdefs.h \
+  /usr/lib/gcc/x86_64-redhat-linux/14/include/limits.h \
+  /usr/lib/gcc/x86_64-redhat-linux/14/include/stddef.h \
+  /usr/lib/gcc/x86_64-redhat-linux/14/include/stdint.h \
+  /usr/lib/gcc/x86_64-redhat-linux/14/include/syslimits.h
+
 CMakeFiles/run.dir/include/Logger.cpp.o: /home/joe/yibo_server/yibo_server/include/Logger.cpp \
   /home/joe/yibo_server/yibo_server/include/Logger.h \
   /home/joe/yibo_server/yibo_server/include/epoll_func.h \
@@ -832,6 +873,7 @@ CMakeFiles/run.dir/include/check_error.cpp.o: /home/joe/yibo_server/yibo_server/
 
 CMakeFiles/run.dir/main.cpp.o: /home/joe/yibo_server/yibo_server/main.cpp \
   /home/joe/yibo_server/yibo_server/bussiness/bussiness.h \
+  /home/joe/yibo_server/yibo_server/http_parser/http_parser.h \
   /home/joe/yibo_server/yibo_server/include/Logger.h \
   /home/joe/yibo_server/yibo_server/include/check_error.h \
   /home/joe/yibo_server/yibo_server/include/epoll_func.h \
@@ -859,6 +901,7 @@ CMakeFiles/run.dir/main.cpp.o: /home/joe/yibo_server/yibo_server/main.cpp \
   /usr/include/asm/socket.h \
   /usr/include/asm/sockios.h \
   /usr/include/asm/types.h \
+  /usr/include/assert.h \
   /usr/include/bits/atomic_wide_counter.h \
   /usr/include/bits/byteswap.h \
   /usr/include/bits/confname.h \
@@ -1070,6 +1113,7 @@ CMakeFiles/run.dir/main.cpp.o: /home/joe/yibo_server/yibo_server/main.cpp \
   /usr/include/c++/14/bits/utility.h \
   /usr/include/c++/14/bits/vector.tcc \
   /usr/include/c++/14/bits/version.h \
+  /usr/include/c++/14/cassert \
   /usr/include/c++/14/cctype \
   /usr/include/c++/14/cerrno \
   /usr/include/c++/14/clocale \
@@ -1772,6 +1816,8 @@ CMakeFiles/run.dir/thread_pool/thread_pool.cpp.o: /home/joe/yibo_server/yibo_ser
 
 /home/joe/yibo_server/yibo_server/server/server.cpp:
 
+/usr/include/c++/14/cassert:
+
 /home/joe/yibo_server/yibo_server/main.cpp:
 
 /usr/include/linux/types.h:
@@ -1812,7 +1858,19 @@ CMakeFiles/run.dir/thread_pool/thread_pool.cpp.o: /home/joe/yibo_server/yibo_ser
 
 /home/joe/yibo_server/yibo_server/include/function_helper.h:
 
+/usr/include/limits.h:
+
+/usr/include/bits/xopen_lim.h:
+
+/usr/include/bits/uio_lim.h:
+
+/home/joe/yibo_server/yibo_server/http_parser/http_parser.h:
+
+/home/joe/yibo_server/yibo_server/http_parser/http_parser.cpp:
+
 /usr/lib/gcc/x86_64-redhat-linux/14/include/stddef.h:
+
+/usr/include/bits/posix1_lim.h:
 
 /usr/include/wchar.h:
 
@@ -1909,6 +1967,8 @@ CMakeFiles/run.dir/thread_pool/thread_pool.cpp.o: /home/joe/yibo_server/yibo_ser
 /usr/include/c++/14/streambuf:
 
 /usr/include/c++/14/stdexcept:
+
+/usr/lib/gcc/x86_64-redhat-linux/14/include/limits.h:
 
 /usr/include/c++/14/ratio:
 
@@ -2212,6 +2272,8 @@ CMakeFiles/run.dir/thread_pool/thread_pool.cpp.o: /home/joe/yibo_server/yibo_ser
 
 /usr/include/bits/stdint-uintn.h:
 
+/usr/include/assert.h:
+
 /usr/include/c++/14/bits/stl_iterator_base_funcs.h:
 
 /usr/include/c++/14/x86_64-redhat-linux/bits/cpu_defines.h:
@@ -2264,6 +2326,8 @@ CMakeFiles/run.dir/thread_pool/thread_pool.cpp.o: /home/joe/yibo_server/yibo_ser
 
 /usr/include/c++/14/bits/allocator.h:
 
+/usr/include/linux/limits.h:
+
 /usr/include/c++/14/bits/atomic_lockfree_defines.h:
 
 /usr/include/c++/14/bits/basic_ios.h:
@@ -2280,6 +2344,8 @@ CMakeFiles/run.dir/thread_pool/thread_pool.cpp.o: /home/joe/yibo_server/yibo_ser
 
 /usr/include/c++/14/cwchar:
 
+/usr/lib/gcc/x86_64-redhat-linux/14/include/syslimits.h:
+
 /usr/include/c++/14/bits/ostream.tcc:
 
 /usr/include/c++/14/ext/aligned_buffer.h:
@@ -2287,6 +2353,8 @@ CMakeFiles/run.dir/thread_pool/thread_pool.cpp.o: /home/joe/yibo_server/yibo_ser
 /usr/include/c++/14/bits/align.h:
 
 /usr/include/c++/14/bits/concept_check.h:
+
+/usr/include/bits/local_lim.h:
 
 /usr/include/c++/14/bits/cpp_type_traits.h:
 
@@ -2415,6 +2483,8 @@ CMakeFiles/run.dir/thread_pool/thread_pool.cpp.o: /home/joe/yibo_server/yibo_ser
 /usr/include/c++/14/bits/stl_map.h:
 
 /usr/include/c++/14/bits/stl_queue.h:
+
+/usr/include/bits/posix2_lim.h:
 
 /usr/include/c++/14/bits/uses_allocator_args.h:
 

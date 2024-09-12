@@ -4,7 +4,7 @@
 # compile CXX with /usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/joe/yibo_server/yibo_server/include -I/home/joe/yibo_server/yibo_server/server -I/home/joe/yibo_server/yibo_server/bussiness -I/home/joe/yibo_server/yibo_server/socket -I/home/joe/yibo_server/yibo_server/thread_pool
+CXX_INCLUDES = -I/home/joe/yibo_server/yibo_server/include -I/home/joe/yibo_server/yibo_server/server -I/home/joe/yibo_server/yibo_server/bussiness -I/home/joe/yibo_server/yibo_server/socket -I/home/joe/yibo_server/yibo_server/thread_pool -I/home/joe/yibo_server/yibo_server/http_parser
 
 CXX_FLAGS = -std=gnu++17
 

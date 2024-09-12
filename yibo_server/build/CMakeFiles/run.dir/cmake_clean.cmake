@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "/home/joe/yibo_server/yibo_server/run.pdb"
   "CMakeFiles/run.dir/bussiness/bussiness.cpp.o"
   "CMakeFiles/run.dir/bussiness/bussiness.cpp.o.d"
+  "CMakeFiles/run.dir/http_parser/http_parser.cpp.o"
+  "CMakeFiles/run.dir/http_parser/http_parser.cpp.o.d"
   "CMakeFiles/run.dir/include/Logger.cpp.o"
   "CMakeFiles/run.dir/include/Logger.cpp.o.d"
   "CMakeFiles/run.dir/include/check_error.cpp.o"

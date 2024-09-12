@@ -48,7 +48,8 @@ include_directories(include
                     server
                     bussiness
                     socket
-                    thread_pool)
+                    thread_pool
+                    http_parser)
 
 #源码添加
 aux_source_directory(. SOURCE)
@@ -63,6 +64,8 @@ aux_source_directory(socket SOURCE_SOCKET)
 
 aux_source_directory(thread_pool SOUCE_THREAD_POOL)
 
+aux_source_directory(http_parser SOURCE_HTTP_PARSER)
+
 #执行目标
 add_executable(${EXECUTE_OBJ} 
                 ${SOURCE} 
@@ -70,4 +73,5 @@ add_executable(${EXECUTE_OBJ}
                 ${SOURCE_SERVER}
                 ${SOURCE_BUSSINESS}
                 ${SOURCE_SOCKET}
-                ${SOUCE_THREAD_POOL})
+                ${SOUCE_THREAD_POOL}
+                ${SOURCE_HTTP_PARSER})
