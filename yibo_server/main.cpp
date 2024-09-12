@@ -173,6 +173,7 @@
 #include <string>
 
 #include "Http_parser.h"
+#include "url_parser.h"
 
 static http_parser *parser;
  
@@ -222,6 +223,81 @@ int on_body(http_parser* _, const char* at, size_t length) {
   return 0;
 }
 
+
+std::string m_protocol;
+std::string m_host;
+std::string m_port;
+std::string m_uri;
+std::map<std::string, std::string> m_values;
+
+int parser_execute(std::string url)
+{
+    int parser_index = 0;
+    //解析协议
+    int protocal_end_index = url.find("://", 0);
+    if(protocal_end_index == -1){ 
+std::cout << "protocol not exisied\r\n";    
+    return -1; }
+    m_protocol = url.substr(parser_index, protocal_end_index);
+std::cout << "m_protocol : " << m_protocol << std::endl;
+    
+    //解析域名 和 端口
+
+    // 协议 + ://(3)
+    parser_index = protocal_end_index + 3;
+    int address_end = url.find('/', parser_index);
+    if(address_end == -1){ return -2; }
+
+    int uri_end = url.find('?', parser_index);
+    if(uri_end == -1) { return -3; }
+
+    m_uri = url.substr(address_end, uri_end - address_end);
+std::cout << "m_uri = " << m_uri << std::endl;
+    // parser_index = address_end;
+
+    m_host = url.substr(parser_index, address_end - parser_index);
+std::cout << "m_url = " << m_host << std::endl;
+    if((address_end = m_host.find(':', 0)) != -1)
+    {
+std::cout << address_end << std::endl;
+        m_port = m_host.substr(address_end + 1, m_host.size() - address_end);
+        m_host = m_host.substr(0, address_end);
+    }
+
+    parser_index = uri_end + 1;
+
+    int map_end_index = 0;
+    while(map_end_index = url.find('&', parser_index) != -1)
+    {
+      int key_end_index = 0;
+      if(key_end_index = url.find('=', parser_index) != -1)
+      {
+        m_values[url.substr(parser_index, key_end_index - parser_index)]
+          = url.substr(key_end_index+1, map_end_index - key_end_index);
+          
+      }
+        parser_index = map_end_index + 1;
+      std::cout << map_end_index;
+    }
+    int key_end_index = 0;
+    if(key_end_index = url.find('=', parser_index) != -1)
+    {
+        m_values[url.substr(parser_index, key_end_index - parser_index)]
+          = url.substr(key_end_index+1, map_end_index - key_end_index);
+          
+        parser_index = map_end_index + 1;
+    }
+
+    
+
+
+std::cout << "m_host = " << m_host << std::endl;
+std::cout << "m_port = " << m_port << std::endl;
+    return 0;
+}
+
+
+
 int main() {
     http_parser_settings parser_set;
  
@@ -263,19 +339,29 @@ int main() {
 	// parser = NULL;
 
 
-  Http_parser parser;
+  // Http_parser parser;
 
 
-  parser.parser_execute(str.c_str(), str.size());
-  std::cout << "url:" << parser.url() << std::endl;
-  std::cout << "header_field :" <<parser.header_field() << std::endl;
-  std::cout << "header_value :" << parser.header_value() << std::endl;
-  std::cout << "body : " << parser.body() << std::endl;
+  // parser.parser_execute(str.c_str(), str.size());
+  // std::cout << "url:" << parser.url() << std::endl;
+  // std::cout << "header_field :" <<parser.header_field() << std::endl;
+  // std::cout << "header_value :" << parser.header_value() << std::endl;
+  // std::cout << "body : " << parser.body() << std::endl;
 
 
-  Http_parser parser1(parser);
+  // Http_parser parser1(parser);
 
-  parser1.parser_execute(str.c_str(), str.size());
+  // parser1.parser_execute(str.c_str(), str.size());
+
+
+  std::string url_1("http://127.0.0.1:19811/?time=144000&salt=9527&user=test&sign=1234567890abcdef");
+  // int index = url_1.find("!", 0);
+  // std::cout << "index = " << index << std::endl;
+
+  // auto m_protocol = url_1.substr(0, index);
+  // std::cout << m_protocol << std::endl;
+  parser_execute(url_1);
+  
 
 
   return 0;
