@@ -1,0 +1,62 @@
+[
+{
+  "directory": "/home/joe/video_server/yibo_server/build",
+  "command": "/usr/bin/c++  -I/home/joe/video_server/yibo_server/include -I/home/joe/video_server/yibo_server/server -I/home/joe/video_server/yibo_server/bussiness -I/home/joe/video_server/yibo_server/socket -I/home/joe/video_server/yibo_server/thread_pool -I/home/joe/video_server/yibo_server/http_parser -g -std=gnu++17 -o CMakeFiles/run.dir/main.cpp.o -c /home/joe/video_server/yibo_server/main.cpp",
+  "file": "/home/joe/video_server/yibo_server/main.cpp",
+  "output": "CMakeFiles/run.dir/main.cpp.o"
+},
+{
+  "directory": "/home/joe/video_server/yibo_server/build",
+  "command": "/usr/bin/c++  -I/home/joe/video_server/yibo_server/include -I/home/joe/video_server/yibo_server/server -I/home/joe/video_server/yibo_server/bussiness -I/home/joe/video_server/yibo_server/socket -I/home/joe/video_server/yibo_server/thread_pool -I/home/joe/video_server/yibo_server/http_parser -g -std=gnu++17 -o CMakeFiles/run.dir/include/Logger.cpp.o -c /home/joe/video_server/yibo_server/include/Logger.cpp",
+  "file": "/home/joe/video_server/yibo_server/include/Logger.cpp",
+  "output": "CMakeFiles/run.dir/include/Logger.cpp.o"
+},
+{
+  "directory": "/home/joe/video_server/yibo_server/build",
+  "command": "/usr/bin/c++  -I/home/joe/video_server/yibo_server/include -I/home/joe/video_server/yibo_server/server -I/home/joe/video_server/yibo_server/bussiness -I/home/joe/video_server/yibo_server/socket -I/home/joe/video_server/yibo_server/thread_pool -I/home/joe/video_server/yibo_server/http_parser -g -std=gnu++17 -o CMakeFiles/run.dir/include/check_error.cpp.o -c /home/joe/video_server/yibo_server/include/check_error.cpp",
+  "file": "/home/joe/video_server/yibo_server/include/check_error.cpp",
+  "output": "CMakeFiles/run.dir/include/check_error.cpp.o"
+},
+{
+  "directory": "/home/joe/video_server/yibo_server/build",
+  "command": "/usr/bin/c++  -I/home/joe/video_server/yibo_server/include -I/home/joe/video_server/yibo_server/server -I/home/joe/video_server/yibo_server/bussiness -I/home/joe/video_server/yibo_server/socket -I/home/joe/video_server/yibo_server/thread_pool -I/home/joe/video_server/yibo_server/http_parser -g -std=gnu++17 -o CMakeFiles/run.dir/server/server.cpp.o -c /home/joe/video_server/yibo_server/server/server.cpp",
+  "file": "/home/joe/video_server/yibo_server/server/server.cpp",
+  "output": "CMakeFiles/run.dir/server/server.cpp.o"
+},
+{
+  "directory": "/home/joe/video_server/yibo_server/build",
+  "command": "/usr/bin/c++  -I/home/joe/video_server/yibo_server/include -I/home/joe/video_server/yibo_server/server -I/home/joe/video_server/yibo_server/bussiness -I/home/joe/video_server/yibo_server/socket -I/home/joe/video_server/yibo_server/thread_pool -I/home/joe/video_server/yibo_server/http_parser -g -std=gnu++17 -o CMakeFiles/run.dir/bussiness/bussiness.cpp.o -c /home/joe/video_server/yibo_server/bussiness/bussiness.cpp",
+  "file": "/home/joe/video_server/yibo_server/bussiness/bussiness.cpp",
+  "output": "CMakeFiles/run.dir/bussiness/bussiness.cpp.o"
+},
+{
+  "directory": "/home/joe/video_server/yibo_server/build",
+  "command": "/usr/bin/c++  -I/home/joe/video_server/yibo_server/include -I/home/joe/video_server/yibo_server/server -I/home/joe/video_server/yibo_server/bussiness -I/home/joe/video_server/yibo_server/socket -I/home/joe/video_server/yibo_server/thread_pool -I/home/joe/video_server/yibo_server/http_parser -g -std=gnu++17 -o CMakeFiles/run.dir/socket/socket.cpp.o -c /home/joe/video_server/yibo_server/socket/socket.cpp",
+  "file": "/home/joe/video_server/yibo_server/socket/socket.cpp",
+  "output": "CMakeFiles/run.dir/socket/socket.cpp.o"
+},
+{
+  "directory": "/home/joe/video_server/yibo_server/build",
+  "command": "/usr/bin/c++  -I/home/joe/video_server/yibo_server/include -I/home/joe/video_server/yibo_server/server -I/home/joe/video_server/yibo_server/bussiness -I/home/joe/video_server/yibo_server/socket -I/home/joe/video_server/yibo_server/thread_pool -I/home/joe/video_server/yibo_server/http_parser -g -std=gnu++17 -o CMakeFiles/run.dir/thread_pool/thread_pool.cpp.o -c /home/joe/video_server/yibo_server/thread_pool/thread_pool.cpp",
+  "file": "/home/joe/video_server/yibo_server/thread_pool/thread_pool.cpp",
+  "output": "CMakeFiles/run.dir/thread_pool/thread_pool.cpp.o"
+},
+{
+  "directory": "/home/joe/video_server/yibo_server/build",
+  "command": "/usr/bin/c++  -I/home/joe/video_server/yibo_server/include -I/home/joe/video_server/yibo_server/server -I/home/joe/video_server/yibo_server/bussiness -I/home/joe/video_server/yibo_server/socket -I/home/joe/video_server/yibo_server/thread_pool -I/home/joe/video_server/yibo_server/http_parser -g -std=gnu++17 -o CMakeFiles/run.dir/http_parser/Http_parser.cpp.o -c /home/joe/video_server/yibo_server/http_parser/Http_parser.cpp",
+  "file": "/home/joe/video_server/yibo_server/http_parser/Http_parser.cpp",
+  "output": "CMakeFiles/run.dir/http_parser/Http_parser.cpp.o"
+},
+{
+  "directory": "/home/joe/video_server/yibo_server/build",
+  "command": "/usr/bin/c++  -I/home/joe/video_server/yibo_server/include -I/home/joe/video_server/yibo_server/server -I/home/joe/video_server/yibo_server/bussiness -I/home/joe/video_server/yibo_server/socket -I/home/joe/video_server/yibo_server/thread_pool -I/home/joe/video_server/yibo_server/http_parser -g -std=gnu++17 -o CMakeFiles/run.dir/http_parser/http_parser.cpp.o -c /home/joe/video_server/yibo_server/http_parser/http_parser.cpp",
+  "file": "/home/joe/video_server/yibo_server/http_parser/http_parser.cpp",
+  "output": "CMakeFiles/run.dir/http_parser/http_parser.cpp.o"
+},
+{
+  "directory": "/home/joe/video_server/yibo_server/build",
+  "command": "/usr/bin/c++  -I/home/joe/video_server/yibo_server/include -I/home/joe/video_server/yibo_server/server -I/home/joe/video_server/yibo_server/bussiness -I/home/joe/video_server/yibo_server/socket -I/home/joe/video_server/yibo_server/thread_pool -I/home/joe/video_server/yibo_server/http_parser -g -std=gnu++17 -o CMakeFiles/run.dir/http_parser/url_parser.cpp.o -c /home/joe/video_server/yibo_server/http_parser/url_parser.cpp",
+  "file": "/home/joe/video_server/yibo_server/http_parser/url_parser.cpp",
+  "output": "CMakeFiles/run.dir/http_parser/url_parser.cpp.o"
+}
+]

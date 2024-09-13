@@ -1,0 +1,3 @@
+/home/joe/video_server/yibo_server/build/CMakeFiles/run.dir
+/home/joe/video_server/yibo_server/build/CMakeFiles/edit_cache.dir
+/home/joe/video_server/yibo_server/build/CMakeFiles/rebuild_cache.dir
